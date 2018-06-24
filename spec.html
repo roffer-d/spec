@@ -3,8 +3,9 @@
 <head>
 	<title></title>
 	<meta charset="utf-8">
-	<link rel="stylesheet" type="text/css" href="resource/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="resource/css/spec.css">
+	<link rel="stylesheet" href="resource/css/bootstrap.min.css">
+	<link rel="stylesheet" href="resource/lib/jquery-validationEngine/css/validationEngine.jquery.css">
+	<link rel="stylesheet" href="resource/css/spec.css">
 </head>
 <body>
 	<div id="window">
@@ -22,6 +23,8 @@
 			<button v-if="classList.length" class="btn btn-sm btn-info" @click="selectedAll">全选</button>
 			<button v-if="classList.length" class="btn btn-sm btn-info" @click="selectReverse">反选</button>
 			<button v-if="classList.length" class="btn btn-sm btn-info" @click="unSelectedAll">清除</button>
+
+			<button v-if="classList.length" class="btn btn-sm btn-primary" @click="submit">获取结果</button>
 		</div>
 		<div class="classify">
 			<div class="classify-list" v-for="(item,index) in classList">
@@ -35,41 +38,45 @@
 			</div>
 		</div>
 		<div class="result">
-			<table id="dataTable" class="table table-bordered table-condensed table-hover">
-				<tr class="head">
-					<td v-for="(item,index) in selectedList" v-html="item.text"></td>
-					<td v-if="selectedList.length">价格(元)</td>
-					<td v-if="selectedList.length">数量(件)</td>
-					<td v-if="selectedList.length">商家成本(元)</td>
-					<td v-if="selectedList.length">合伙人价格</td>
-					<td v-if="selectedList.length">商家编码</td>
-					<td v-if="selectedList.length">商品条形码</td>
-					<td v-if="selectedList.length">商品图预览</td>
-					<td v-if="selectedList.length">商品图</td>
-				</tr>
-				<tr class="body" v-for="(item,index) in resultList">
-					<td class="spec" v-for="(child,i) in item" v-html="child.text"></td>
-					<!-- <td class="spec" v-for="(child,i) in item">
-						<table>
-							<tr>
-								<td v-html="child.text"></td>
-							</tr>
-						</table>
-					</td> -->
-					<td v-if="selectedList.length"><input type="text" class="form-control" /></td>
-					<td v-if="selectedList.length"><input type="text" class="form-control" /></td>
-					<td v-if="selectedList.length"><input type="text" class="form-control" /></td>
-					<td v-if="selectedList.length"><input type="text" class="form-control" /></td>
-					<td v-if="selectedList.length"><input type="text" class="form-control" /></td>
-					<td v-if="selectedList.length"><input type="text" class="form-control" /></td>
-					<td v-if="selectedList.length"><img src="http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg" /></td>
-					<td v-if="selectedList.length">图库&nbsp;本地</td>
-				</tr>
-			</table>
+			<form id="specForm">
+				<table id="dataTable" class="table table-bordered table-condensed table-hover">
+					<tr class="head">
+						<td v-for="(item,index) in selectedList" v-html="item.text"></td>
+						<td v-if="selectedList.length">价格(元)</td>
+						<td v-if="selectedList.length">数量(件)</td>
+						<td v-if="selectedList.length">商家成本(元)</td>
+						<td v-if="selectedList.length">合伙人价格</td>
+						<td v-if="selectedList.length">商家编码</td>
+						<td v-if="selectedList.length">商品条形码</td>
+						<td v-if="selectedList.length">商品图预览</td>
+						<td v-if="selectedList.length">商品图</td>
+					</tr>
+					<tr class="body" v-for="(item,index) in resultList">
+						<td class="spec" v-for="(child,i) in item" v-html="child.text"></td>
+						<!-- <td class="spec" v-for="(child,i) in item">
+							<table>
+								<tr>
+									<td v-html="child.text"></td>
+								</tr>
+							</table>
+						</td> -->
+						<td v-if="selectedList.length"><input type="text" class="form-control validate[required,custom[number]]" /></td>
+						<td v-if="selectedList.length"><input type="text" class="form-control validate[required,custom[integer]]" /></td>
+						<td v-if="selectedList.length"><input type="text" class="form-control validate[required]" /></td>
+						<td v-if="selectedList.length"><input type="text" class="form-control validate[required]" /></td>
+						<td v-if="selectedList.length"><input type="text" class="form-control validate[required]" /></td>
+						<td v-if="selectedList.length"><input type="text" class="form-control validate[required]" /></td>
+						<td v-if="selectedList.length"><img src="http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg" /></td>
+						<td v-if="selectedList.length">图库&nbsp;本地</td>
+					</tr>
+				</table>
+			</form>
 		</div>
 	</div>
 
 	<script src="resource/lib/jquery-1.12.4.min.js"></script>
+	<script src="resource/lib/jquery-validationEngine/js/jquery.validationEngine.js"></script>
+	<script src="resource/lib/jquery-validationEngine/js/jquery.validationEngine-zh_CN.js"></script>
 	<script src="resource/lib/layer-v3.1.1/layer.js"></script>
 	<script src="resource/lib/vue.min.js"></script>
 	<script src="resource/js/spec.js"></script>

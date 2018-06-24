@@ -83,7 +83,8 @@ new Vue({
 		init(){
 			/** 初始化页面,执行取消全部选中 **/
 			this.unSelectedAll();
-			this.bindJQ();
+			this.mergeCell();
+			this.bindValidate();
 		},
 		openModal(){
 			let that = this;
@@ -121,6 +122,7 @@ new Vue({
 		            classChildrenList.forEach(item=>{
 		            	readyChildrenList.forEach(ready=>{
 		            		if(item.id==ready.id && item.selected){
+		            			/** 循环匹配选中,防止之前规格的选中状态丢失 **/
 		            			ready.selected = item.selected;
 		            		}
 		            	})
@@ -160,7 +162,7 @@ new Vue({
 			}
 			this.select(pIndex,index);
 		},
-		bindJQ(){
+		mergeCell(){
 			jQuery.fn.rowspan = function(colIdx) { //封装的一个JQuery小插件 
 				return this.each(function(){ 
 					var that; 
@@ -185,6 +187,22 @@ new Vue({
 				}); 
 			}
 		},
+		bindValidate(){
+			$('#specForm').validationEngine({
+                promptPosition: 'bottomRight',
+                validationEventTriggers:"keyup blur",
+                scroll: false
+            });
+		},
+
+		submit(){
+			let valid = $('#specForm').validationEngine("validate");
+			if(valid){
+				/** 表单验证通过 **/
+
+			}
+		},
+
 		/** 选中规格 **/
 		select(pIndex,index){
 			let before = this.classList;
