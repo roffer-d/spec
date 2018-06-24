@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="resource/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="resource/css/spec.css">
+</head>
+<body>
+	<div id="window">
+		<div id="baseList">
+			<div v-for="(item,index) in baseList" 
+				:class="'classify-item base-item ' + (item.selected ? 'selected' : '')" 
+				@click="getBaseInfo(index)">
+
+			 	<span v-html="item.text"></span>
+			 	<span v-if="item.selected" class="cur"></span>
+			</div>
+		</div>
+		<div class="add-classfiy"><button class="btn btn-primary" @click="openModal(0)">添加规格</button></div>
+		<div class="classify">
+			<div class="classify-list" v-for="(item,index) in classList">
+				<span class="classify-label" v-html="item.text"></span>
+				<div v-for="(child,i) in item.children" :class="'classify-item ' + (child.selected ? 'selected' : '')" 
+					 @click="getInfo(index,i)">
+					 	<span v-html="child.text"></span>
+					 	<span v-if="child.selected" class="cur"></span>
+					 </div>
+			</div>
+		</div>
+		<div class="result">
+			<table id="dataTable" class="table table-bordered table-condensed table-hover">
+				<tr class="head">
+					<td v-for="(item,index) in selectedList" v-html="item.text"></td>
+					<td v-if="selectedList.length">价格(元)</td>
+					<td v-if="selectedList.length">数量(件)</td>
+					<td v-if="selectedList.length">商家成本(元)</td>
+					<td v-if="selectedList.length">合伙人价格</td>
+					<td v-if="selectedList.length">商家编码</td>
+					<td v-if="selectedList.length">商品条形码</td>
+					<td v-if="selectedList.length">商品图预览</td>
+					<td v-if="selectedList.length">商品图</td>
+				</tr>
+				<tr class="body" v-for="(item,index) in resultList">
+					<td class="spec" v-for="(child,i) in item" v-html="child.text"></td>
+					<!-- <td class="spec" v-for="(child,i) in item">
+						<table>
+							<tr>
+								<td v-html="child.text"></td>
+							</tr>
+						</table>
+					</td> -->
+					<td v-if="selectedList.length"><input type="text" class="form-control" /></td>
+					<td v-if="selectedList.length"><input type="text" class="form-control" /></td>
+					<td v-if="selectedList.length"><input type="text" class="form-control" /></td>
+					<td v-if="selectedList.length"><input type="text" class="form-control" /></td>
+					<td v-if="selectedList.length"><input type="text" class="form-control" /></td>
+					<td v-if="selectedList.length"><input type="text" class="form-control" /></td>
+					<td v-if="selectedList.length"><img src="http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg" /></td>
+					<td v-if="selectedList.length">图库&nbsp;本地</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<script src="resource/lib/jquery-1.12.4.min.js"></script>
+	<script src="resource/lib/layer-v3.1.1/layer.js"></script>
+	<script src="resource/lib/vue.min.js"></script>
+	<script src="resource/js/spec.js"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+.window{}
+.classify{}
+.classify-list{
+	display: flex;
+    /*border-bottom: 1px solid #c32026;*/
+    width: 100%;
+    padding: 20px;
+}
+.classify-label{
+	min-width: 50px;
+	text-align: center;
+	font-weight: 700;
+	color: #333;
+	line-height: 30px;
+}
+.classify-item{
+	width: 60px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #ccc;
+    margin-right: 8px;
+    color: #555;
+    padding: 0 5px;
+    cursor: pointer;
+}
+.selected{
+	position: relative;
+	color: #c32026;
+	border: 1px solid #c32026;
+}
+.cur{
+    position: absolute;
+    width: 0;
+    height: 0;
+    right: 0;
+    bottom: 0;
+    border-bottom-width: 12px;
+    border-right-width: 0;
+    border-left-width: 12px;
+    border-style: solid;
+    border-color: transparent transparent #c32026 transparent;
+}
+.cur:after{
+	content: "√";
+    position: absolute;
+    top: -8px;
+    left: -7px;
+    color: #fff;
+    font-size: 12px;
+}
+.result{
+	width: 100%;
+	padding: 20px 30px;
+}
+table td{
+	vertical-align: middle !important;
+}
+table img{
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+}
+table input{
+	width: 80px !important;
+}
+#baseList{
+	display: none;
+	padding: 20px;
+}
+.add-classfiy{
+	display: inline-block;
+	margin: 20px 50px;
+}
+.base-item{
+	display: inline-block;
+}
