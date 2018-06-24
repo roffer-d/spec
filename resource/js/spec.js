@@ -85,7 +85,7 @@ new Vue({
 			this.unSelectedAll();
 			this.bindJQ();
 		},
-		openModal(type){
+		openModal(){
 			let that = this;
 
 			layer.open({
@@ -105,7 +105,28 @@ new Vue({
 				  return false; 
 				} 
 		        ,btn1: function(index){
-		            that.classList = JSON.parse(JSON.stringify(that.readyList));
+		            let tempList = JSON.parse(JSON.stringify(that.readyList));
+
+		            let readyChildrenList = [],classChildrenList = [];
+		            tempList.forEach(item=>{
+		            	item.children.forEach(child=>{
+		            		readyChildrenList.push(child);
+		            	})
+		            })
+		            that.classList.forEach(item=>{
+		            	item.children.forEach(child=>{
+		            		classChildrenList.push(child);
+		            	})
+		            })
+		            classChildrenList.forEach(item=>{
+		            	readyChildrenList.forEach(ready=>{
+		            		if(item.id==ready.id && item.selected){
+		            			ready.selected = item.selected;
+		            		}
+		            	})
+		            })
+
+		            that.classList = tempList;
 		            layer.close(index);
 		        }
 		        ,btn2:function(index){
@@ -113,8 +134,10 @@ new Vue({
 		        }
 			})
 		},
+		/** 点击添加规格 **/
 		getBaseInfo(index){
 			let base = this.baseList[index],selected = base.selected;
+
 			base.selected = !base.selected;
 
 			if(!selected)
@@ -128,6 +151,13 @@ new Vue({
 		},
 		/** 点击规格事件 **/
 		getInfo(pIndex,index){
+			let current = this.classList[pIndex].children[index];//获取当前点击对象
+			let selected = current.selected;//当前点击对象是否选中
+
+			if(selected){
+				this.unSelect(pIndex,index);
+				return;
+			}
 			this.select(pIndex,index);
 		},
 		bindJQ(){
@@ -162,103 +192,159 @@ new Vue({
 
 			let parent = before[pIndex];//获取父及对象
 			let current = parent.children[index];//获取当前点击对象
-			let selected = current.selected;//当前点击对象是否选中
-			current.selected = !selected;//赋值当前对象选中(取反)
+			current.selected = !0;//赋值当前对象选中(取反)
 
 			/** 加这段代码是因为修改的是二维数组下的属性,无法更新视图,通过splice方法可以实现视图更新 **/
 			before[pIndex].children.splice(index,1,current);
 
-			if(!selected){//如果点击的时候没有选中
+			/** 判断当前点击对象的父及是否已经在已选中数据集中出现 **/
+			let has = after.some((item,index)=>{
+				let flag = item.id == parent.id;
 
-				/** 判断当前点击对象的父及是否已经在已选中数据集中出现 **/
-				let has = after.some((item,index)=>{
-					let flag = item.id == parent.id;
+				if(flag){/** 如果父对象已经存在 **/
 
-					/** 如果已经存在，则在之前对象上追加子对象 **/
-					flag && item.children.push(Object.assign({},current));
-					return flag;
-				})
+					/** 判断当前父对象有无子对象 **/
+					let hasCurrent = item.children.some(child=>{
+						return child.id == current.id
+					})
 
-				/** 如果不存在，则表示第一次增加 **/
-				if(!has){
-
-					/** 先拷贝一份当前点击对象 **/
-					let clone = JSON.parse(JSON.stringify(before[pIndex]));//深度拷贝对象
-
-					/** 创建一个新对象 **/
-					let newSelected = {
-						id:clone.id,
-						text:clone.text,
-						children:[
-							{
-								id:current.id,
-								text:current.text,
-								price:current.price,
-								total:current.total,
-								cost:current.cost,
-								partnerPrice:current.partnerPrice,
-								shopCode:current.shopCode,
-								shopBarcodes:current.current,
-								preImg:current.preImg,
-								goodImg:current.goodImg,
-								selected:current.selected
-							}
-						]
-					};
-
-					/** 按照数据从上至下的顺序渲染表格 **/
-
-					if(!after.length || after[0].id < parent.id){
-						//如果选中的数组为空或者数组中第一个id比选中的父及id小,则排列在最后
-						after.push(newSelected);
-					}else{
-						//在最前边加入
-						after.unshift(newSelected);
-					}
+					/** 没有子对象，添加子对象 **/
+					!hasCurrent && item.children.push(Object.assign({},current));
 				}
-			}else{
-				/** 取消选中，从选中数组中移除选中项 **/
-				after.forEach((item,index)=>{
-					if(item.id == parent.id){
-						item.children.forEach((child,i)=>{
-							if(child.id == current.id){
-								item.children.splice(i,1);
-							}
-						})
 
-						//如果删完了下边的属性,则删除父及
-						!item.children.length && after.splice(index,1);
+				return flag;
+			})
 
-						return false;
-					}
-				})
+			/** 如果父对象不存在，则表示第一次增加 **/
+			if(!has){
+
+				/** 先拷贝一份当前点击对象 **/
+				let clone = JSON.parse(JSON.stringify(before[pIndex]));//深度拷贝对象
+
+				/** 创建一个新对象 **/
+				let newSelected = {
+					id:clone.id,
+					text:clone.text,
+					children:[
+						{
+							id:current.id,
+							text:current.text,
+							price:current.price,
+							total:current.total,
+							cost:current.cost,
+							partnerPrice:current.partnerPrice,
+							shopCode:current.shopCode,
+							shopBarcodes:current.current,
+							preImg:current.preImg,
+							goodImg:current.goodImg,
+							selected:current.selected
+						}
+					]
+				};
+
+				/** 按照数据从上至下的顺序渲染表格 **/
+
+				if(!after.length || after[0].id < parent.id){
+					//如果选中的数组为空或者数组中第一个id比选中的父及id小,则排列在最后
+					after.push(newSelected);
+				}else{
+					//在最前边加入
+					after.unshift(newSelected);
+				}
 			}
+		},
+		/** 取消选中规格 **/
+		unSelect(pIndex,index){
+			let before = this.classList;
+			let after = this.selectedList;
+
+			let parent = before[pIndex];//获取父及对象
+			let current = parent.children[index];//获取当前点击对象
+			current.selected = !1;//赋值当前对象选中(取反)
+
+			/** 加这段代码是因为修改的是二维数组下的属性,无法更新视图,通过splice方法可以实现视图更新 **/
+			before[pIndex].children.splice(index,1,current);
+
+			/** 取消选中，从选中数组中移除选中项 **/
+			after.forEach((item,index)=>{
+				if(item.id == parent.id){
+					item.children.forEach((child,i)=>{
+						if(child.id == current.id){
+							item.children.splice(i,1);
+						}
+					})
+
+					//如果删完了下边的属性,则删除父及
+					!item.children.length && after.splice(index,1);
+
+					return false;
+				}
+			})
+		},
+		/** 选中组 **/
+		selectedGroup(classIndex){
+			this.setState(4,classIndex);
 		},
 		/** 取消选中组 **/
 		unSelectedGroup(classIndex){
-			this.classList.forEach((item,index)=>{
-				if(classIndex == index){
-					item.children.forEach((chid,i)=>{
-						chid.selected = !1;
-					})
-				}
-			})
+			this.setState(5,classIndex);
 		},
-		/** 取消选中全部 **/
+		/** 清空全选 **/
 		unSelectedAll(){
-			this.classList.forEach((item,index)=>{
-				item.children.forEach((chid,i)=>{
-					chid.selected = !1;
-					item.children.splice(i,1,chid);
-				})
-			})
+			this.setState(3);
 		},
 		/** 全选 **/
 		selectedAll(){
+			this.setState(1);
+		},
+		/** 反选 **/
+		selectReverse(){
+			this.setState(2);
+		},
+		setState(type,classIndex){
+			//type-->1：全选，2：反选，3：清空全选，4：选中组，5：清空组
+
 			this.classList.forEach((item,index)=>{
-				item.children.forEach((chid,i)=>{
-					chid.selected = !0;
-					item.children.splice(i,1,chid);
+				if(type == 4 || type == 5){
+
+					if(classIndex == index){
+						item.children.forEach((child,i)=>{
+							switch(type){
+								case 4:
+									child.selected = !0;
+									this.select(index,i);
+									break;
+								case 5:
+									child.selected = !1;
+									this.unSelect(index,i);
+									break;
+							}
+							item.children.splice(i,1,child);
+						})
+					}
+
+					return;
+				}
+
+				item.children.forEach((child,i)=>{
+					switch(type){
+						case 1:
+							child.selected = !0;
+							this.select(index,i);
+							break;
+						case 2:
+							let isSelected = child.selected;
+							child.selected = !isSelected;
+
+							if(isSelected)this.unSelect(index,i);
+							else this.select(index,i);
+							break;
+						case 3:
+							child.selected = !1;
+							this.unSelect(index,i);
+							break;
+					}
+					item.children.splice(i,1,child);
 				})
 			})
 		}

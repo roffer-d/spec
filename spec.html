@@ -17,7 +17,12 @@
 			 	<span v-if="item.selected" class="cur"></span>
 			</div>
 		</div>
-		<div class="add-classfiy"><button class="btn btn-primary" @click="openModal(0)">添加规格</button></div>
+		<div class="add-classfiy">
+			<button class="btn btn-sm btn-info" @click="openModal">添加规格</button>
+			<button v-if="classList.length" class="btn btn-sm btn-info" @click="selectedAll">全选</button>
+			<button v-if="classList.length" class="btn btn-sm btn-info" @click="selectReverse">反选</button>
+			<button v-if="classList.length" class="btn btn-sm btn-info" @click="unSelectedAll">清除</button>
+		</div>
 		<div class="classify">
 			<div class="classify-list" v-for="(item,index) in classList">
 				<span class="classify-label" v-html="item.text"></span>
@@ -25,7 +30,8 @@
 					 @click="getInfo(index,i)">
 					 	<span v-html="child.text"></span>
 					 	<span v-if="child.selected" class="cur"></span>
-					 </div>
+				</div>
+				<button class="btn btn-sm btn-info" @click="selectedGroup(index)">选中该组</button>
 			</div>
 		</div>
 		<div class="result">
