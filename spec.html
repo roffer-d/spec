@@ -38,36 +38,32 @@
 			</div>
 		</div>
 		<div class="result">
-			<form id="specForm">
+			<form v-if="selectedList.length" id="specForm">
 				<table id="dataTable" class="table table-bordered table-condensed table-hover">
 					<tr class="head">
 						<td v-for="(item,index) in selectedList" v-html="item.text"></td>
-						<td v-if="selectedList.length">价格(元)</td>
-						<td v-if="selectedList.length">数量(件)</td>
-						<td v-if="selectedList.length">商家成本(元)</td>
-						<td v-if="selectedList.length">合伙人价格</td>
-						<td v-if="selectedList.length">商家编码</td>
-						<td v-if="selectedList.length">商品条形码</td>
-						<td v-if="selectedList.length">商品图预览</td>
-						<td v-if="selectedList.length">商品图</td>
+						<td>价格(元)</td>
+						<td>数量(件)</td>
+						<td>商家成本(元)</td>
+						<td>合伙人价格</td>
+						<td>商家编码</td>
+						<td>商品条形码</td>
+						<td>商品图预览</td>
+						<td>商品图</td>
 					</tr>
 					<tr class="body" v-for="(item,index) in resultList">
-						<td class="spec" v-for="(child,i) in item" v-html="child.text"></td>
-						<!-- <td class="spec" v-for="(child,i) in item">
-							<table>
-								<tr>
-									<td v-html="child.text"></td>
-								</tr>
-							</table>
-						</td> -->
-						<td v-if="selectedList.length"><input type="text" class="form-control validate[required,custom[number]]" /></td>
-						<td v-if="selectedList.length"><input type="text" class="form-control validate[required,custom[integer]]" /></td>
-						<td v-if="selectedList.length"><input type="text" class="form-control validate[required]" /></td>
-						<td v-if="selectedList.length"><input type="text" class="form-control validate[required]" /></td>
-						<td v-if="selectedList.length"><input type="text" class="form-control validate[required]" /></td>
-						<td v-if="selectedList.length"><input type="text" class="form-control validate[required]" /></td>
-						<td v-if="selectedList.length"><img src="http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg" /></td>
-						<td v-if="selectedList.length">图库&nbsp;本地</td>
+						<td class="spec" v-for="(child,i) in item.children" v-html="child.text"></td>
+						<td v-for="(key,value) of item" v-if="value!='children'">
+							<input type="text" v-model="item[value]" class="form-control validate[required,custom[number]]" />
+						</td>
+						<!-- <td><input type="text" class="form-control validate[required,custom[number]]" /></td>
+						<td><input type="text" class="form-control validate[required,custom[integer]]" /></td>
+						<td><input type="text" class="form-control validate[required]" /></td>
+						<td><input type="text" class="form-control validate[required]" /></td>
+						<td><input type="text" class="form-control validate[required]" /></td>
+						<td><input type="text" class="form-control validate[required]" /></td>
+						<td><img src="http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg" /></td>
+						<td>图库&nbsp;本地</td> -->
 					</tr>
 				</table>
 			</form>

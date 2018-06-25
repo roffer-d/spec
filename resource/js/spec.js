@@ -4,37 +4,28 @@ new Vue({
 		baseList:[
 			{id:'1',text:'颜色',selected:!1,
 				children:[
-					{id:'1_1',text:'红色',price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',selected:!1,
-						preImg:'http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg',goodImg:''},
-					{id:'1_2',text:'黑色',price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',selected:!1,
-						preImg:'http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg',goodImg:''},
-					{id:'1_3',text:'蓝色',price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',selected:!1,
-						preImg:'http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg',goodImg:''}
+					{id:'1_1',text:'红色',selected:!1},
+					{id:'1_2',text:'黑色',selected:!1},
+					{id:'1_3',text:'蓝色',selected:!1}
 				]
 			},
 			{id:'2',text:'品牌',selected:!1,
 				children:[
-					{id:'2_1',text:'苹果',price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',selected:!1,
-						preImg:'http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg',goodImg:''},
-					{id:'2_2',text:'黑莓',price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',selected:!1,
-						preImg:'http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg',goodImg:''},
-					{id:'2_3',text:'华为',price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',selected:!1,
-						preImg:'http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg',goodImg:''},
-					{id:'2_4',text:'三星',price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',selected:!1,
-						preImg:'http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg',goodImg:''}
+					{id:'2_1',text:'苹果',selected:!1},
+					{id:'2_2',text:'黑莓',selected:!1},
+					{id:'2_3',text:'华为',selected:!1},
+					{id:'2_4',text:'三星',selected:!1}
 				]
 			},
 			{id:'3',text:'国家',selected:!1,
 				children:[
-					{id:'3_1',text:'中国',price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',selected:!1,
-						preImg:'http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg',goodImg:''},
-					{id:'3_2',text:'美国',price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',selected:!1,
-						preImg:'http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg',goodImg:''},
-					{id:'3_3',text:'法国',price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',selected:!1,
-						preImg:'http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg',goodImg:''}
+					{id:'3_1',text:'中国',selected:!1},
+					{id:'3_2',text:'美国',selected:!1},
+					{id:'3_3',text:'法国',selected:!1}
 				]
 			}
 		],
+		editData:[],//页面初始化编辑数据
 		readyList:[],//待添加列表
 		classList:[],//已添加到页面的数据
 		selectedList:[],//选中的数据
@@ -67,9 +58,31 @@ new Vue({
 				}
 
 				/** 得出最终输出结果 **/
-				this.resultList = descartes.apply(null,tempList);
+				let arr = descartes.apply(null,tempList);
+
+				this.resultList = [];
+				/** 遍历数据,追加附加属性 **/
+				arr.forEach((item,index)=>{
+					let option = {
+						price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',goodImg:'',
+						preImg:'http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg'
+					};
+
+					/** 初始化页面有编辑数据,把编辑数据赋值上去 ***/
+					this.editData.forEach((data,idx)=>{
+						if(item.id == data.id){
+							option = Object.assign({},option,data);
+						}
+					})
+
+					option.children = item;
+					this.resultList.push(option);
+				})
 
 				this.$nextTick(function(){
+					/** 生成表格之后,绑定表单验证事件 **/
+					$("#specForm").validationEngine("attach");
+
 					/** 合并连续相同数据的单元格 **/
 					this.selectedList.forEach((item,index)=>{
 						$("#dataTable").rowspan(index);//传入的参数是对应的列数从0开始，哪一列有相同的内容就输入对应的列数值
@@ -77,14 +90,122 @@ new Vue({
 				})
 			},
 			deep:true
+		},
+		editData:{
+			handler(){
+				let arr = [];//用作判断是否重复添加
+				this.baseList.forEach((base,index)=>{
+					base.children.forEach((child,idx)=>{
+						this.editData.forEach(edit=>{
+							edit.children.forEach(obj=>{
+								if(child.id == obj.id && arr.indexOf(index) == -1){
+									this.getBaseInfo(index,1);//渲染已选择的父级规格
+									this.select(index,idx);//选中已选择的子规格
+									console.log(index,idx);
+									arr.push(index);
+								}
+							})
+						})
+					})
+				})
+				this.classList = JSON.parse(JSON.stringify(this.readyList));
+			},
+			deep:true
 		}
 	},
 	methods:{
 		init(){
 			/** 初始化页面,执行取消全部选中 **/
-			this.unSelectedAll();
+			// this.unSelectedAll();
+			this.initSelect();
 			this.mergeCell();
 			this.bindValidate();
+		},
+		/** 初始化编辑页面数据 **/
+		initSelect(){
+			this.editData = [
+				{
+				    "children": [
+				        {
+				            "id": "1_1",
+				            "text": "红色",
+				            "selected": true
+				        },
+				        {
+				            "id": "2_1",
+				            "text": "苹果",
+				            "selected": true
+				        },
+				        {
+				            "id": "3_1",
+				            "text": "中国",
+				            "selected": true
+				        }
+				    ],
+				    "price": "11",
+				    "total": "12",
+				    "cost": "13",
+				    "partnerPrice": "14",
+				    "shopCode": "15",
+				    "shopBarcodes": "16",
+				    "goodImg": "17",
+				    "preImg": "http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg"
+				},
+				{
+				    "children": [
+				        {
+				            "id": "1_1",
+				            "text": "红色",
+				            "selected": true
+				        },
+				        {
+				            "id": "2_1",
+				            "text": "苹果",
+				            "selected": true
+				        },
+				        {
+				            "id": "3_2",
+				            "text": "美国",
+				            "selected": true
+				        }
+				    ],
+				    "price": "",
+				    "total": "",
+				    "cost": "",
+				    "partnerPrice": "",
+				    "shopCode": "",
+				    "shopBarcodes": "",
+				    "goodImg": "",
+				    "preImg": "http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg"
+				},
+				{
+				    "children": [
+				        {
+				            "id": "1_1",
+				            "text": "红色",
+				            "selected": true
+				        },
+				        {
+				            "id": "2_1",
+				            "text": "苹果",
+				            "selected": true
+				        },
+				        {
+				            "id": "3_3",
+				            "text": "法国",
+				            "selected": true
+				        }
+				    ],
+				    "price": "",
+				    "total": "",
+				    "cost": "",
+				    "partnerPrice": "",
+				    "shopCode": "",
+				    "shopBarcodes": "",
+				    "goodImg": "",
+				    "preImg": "http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg"
+				}
+			]
 		},
 		openModal(){
 			let that = this;
@@ -136,14 +257,16 @@ new Vue({
 		        }
 			})
 		},
-		/** 点击添加规格 **/
-		getBaseInfo(index){
+		/** 点击添加规格 type:该值存在表示编辑页面初始化数据 **/
+		getBaseInfo(index,type){
 			let base = this.baseList[index],selected = base.selected;
 
 			base.selected = !base.selected;
 
-			if(!selected)
+			if(!selected){
 				this.readyList.push(base);
+				type && this.classList.push(base);
+			}
 			else
 				this.readyList.forEach((item,idx)=>{
 					if(item.id==base.id){
@@ -187,6 +310,7 @@ new Vue({
 				}); 
 			}
 		},
+		/**初始化表单验证**/
 		bindValidate(){
 			$('#specForm').validationEngine({
                 promptPosition: 'bottomRight',
@@ -194,15 +318,15 @@ new Vue({
                 scroll: false
             });
 		},
-
+		/** 提交事件 **/
 		submit(){
-			let valid = $('#specForm').validationEngine("validate");
-			if(valid){
-				/** 表单验证通过 **/
+			console.log(JSON.stringify(this.resultList));
+			// let valid = $('#specForm').validationEngine("validate");
+			// if(valid){
+			// 	/** 表单验证通过 **/
 
-			}
+			// }
 		},
-
 		/** 选中规格 **/
 		select(pIndex,index){
 			let before = this.classList;
@@ -210,7 +334,7 @@ new Vue({
 
 			let parent = before[pIndex];//获取父及对象
 			let current = parent.children[index];//获取当前点击对象
-			current.selected = !0;//赋值当前对象选中(取反)
+			current.selected = !0;//赋值当前对象选中
 
 			/** 加这段代码是因为修改的是二维数组下的属性,无法更新视图,通过splice方法可以实现视图更新 **/
 			before[pIndex].children.splice(index,1,current);
@@ -246,16 +370,7 @@ new Vue({
 					children:[
 						{
 							id:current.id,
-							text:current.text,
-							price:current.price,
-							total:current.total,
-							cost:current.cost,
-							partnerPrice:current.partnerPrice,
-							shopCode:current.shopCode,
-							shopBarcodes:current.current,
-							preImg:current.preImg,
-							goodImg:current.goodImg,
-							selected:current.selected
+							text:current.text
 						}
 					]
 				};
@@ -278,7 +393,7 @@ new Vue({
 
 			let parent = before[pIndex];//获取父及对象
 			let current = parent.children[index];//获取当前点击对象
-			current.selected = !1;//赋值当前对象选中(取反)
+			current.selected = !1;//赋值当前对象取消选中
 
 			/** 加这段代码是因为修改的是二维数组下的属性,无法更新视图,通过splice方法可以实现视图更新 **/
 			before[pIndex].children.splice(index,1,current);
