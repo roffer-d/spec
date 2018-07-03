@@ -30,7 +30,7 @@
 		<div class="classify">
 			<div class="classify-list" v-for="(item,index) in classList">
 				<span class="classify-label" v-html="item.text"></span>
-				<div v-for="(child,i) in item.children" :class="'classify-item ' + (child.selected ? 'selected' : '')" 
+				<div v-for="(child,i) in item.children" :class="'classify-item ' + (child.selected ? 'selected' : '')"
 					 @click="getInfo(index,i)">
 					 	<span v-html="child.text"></span>
 					 	<span v-if="child.selected" class="cur"></span>

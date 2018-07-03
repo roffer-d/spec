@@ -123,7 +123,7 @@ new Vue({
 		init(){
 			/** 初始化页面,执行取消全部选中 **/
 			// this.unSelectedAll();
-			this.initSelect();
+			// this.initSelect();
 			this.mergeCell();
 			this.bindValidate();
 		},
@@ -296,7 +296,7 @@ new Vue({
 		},
 		/** 点击添加规格 type:该值存在表示编辑页面初始化数据 **/
 		getBaseInfo(index,type){
-			let base = JSON.parse(JSON.stringify(this.baseList[index])),selected = base.selected;
+			let base = this.baseList[index],selected = base.selected;
 
 			base.selected = !base.selected;
 
