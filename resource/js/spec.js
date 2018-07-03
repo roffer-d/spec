@@ -119,7 +119,7 @@ new Vue({
 		init(){
 			/** 初始化页面,执行取消全部选中 **/
 			// this.unSelectedAll();
-			this.initSelect();
+			// this.initSelect();
 			this.mergeCell();
 			this.bindValidate();
 		},
