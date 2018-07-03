@@ -64,16 +64,22 @@ new Vue({
 				/** 遍历数据,追加附加属性 **/
 				arr.forEach((item,index)=>{
 					let option = {
-						price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',goodImg:'',
-						preImg:''
+						price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',preImg:'',
+						goodImg:''
 					};
 
 					/** 初始化页面有编辑数据,把编辑数据赋值上去 ***/
-					this.editData.forEach((data,idx)=>{
-						if(item.id == data.id){
-							option = Object.assign({},option,data);
-						}
+					let ids = [];
+					item.forEach(ite=>{
+						ids.push(ite.id);//把每一项的id组合起来成为item的ids
 					})
+					item.ids = ids.join(',');
+
+                    this.editData.forEach(data=>{
+                        if(item.ids == data.ids){
+                            option = Object.assign({},option,data);
+                        }
+                    })
 
 					option.children = item;
 					this.resultList.push(option);
@@ -100,6 +106,7 @@ new Vue({
 							edit.children.forEach(obj=>{
 								if(child.id == obj.id){
 									arr.indexOf(index)==-1 && this.getBaseInfo(index,1);//渲染已选择的父级规格
+
 									this.select(index,idx);//选中已选择的子规格
 
 									arr.push(index);
@@ -108,9 +115,6 @@ new Vue({
 						})
 					})
 				})
-
-				// this.classList = JSON.parse(JSON.stringify(this.readyList));
-				// console.log(JSON.stringify(this.classList));
 			},
 			deep:true
 		}
@@ -127,6 +131,7 @@ new Vue({
 		initSelect(){
 			this.editData = [
 				{
+					"ids":"1_1,2_2,3_1",
 				    "children": [
 				        {
 				            "id": "1_1",
@@ -150,10 +155,11 @@ new Vue({
 				    "partnerPrice": "14",
 				    "shopCode": "15",
 				    "shopBarcodes": "16",
-				    "goodImg": "17",
-				    "preImg": "http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg"
+                    "preImg": "http://zkw.oss-cn-beijing.aliyuncs.com/img/8700d83634dd4c2ca9dcbf8ebff77b8e.jpg",
+                    "goodImg": "17"
 				},
 				{
+                    "ids":"1_1,2_2,3_2",
 				    "children": [
 				        {
 				            "id": "1_1",
@@ -177,10 +183,11 @@ new Vue({
 				    "partnerPrice": "",
 				    "shopCode": "",
 				    "shopBarcodes": "",
-				    "goodImg": "",
-				    "preImg": "http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg"
-				},
+                    "preImg": "",
+                    "goodImg": ""
+                },
 				{
+                    "ids":"1_1,2_2,3_3",
 				    "children": [
 				        {
 				            "id": "1_1",
@@ -204,10 +211,11 @@ new Vue({
 				    "partnerPrice": "",
 				    "shopCode": "",
 				    "shopBarcodes": "",
-				    "goodImg": "",
-				    "preImg": "http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg"
+                    "preImg": "",
+                    "goodImg": ""
 				},
 				{
+                    "ids":"1_3,2_2,3_3",
 				    "children": [
 				        {
 				            "id": "1_3",
@@ -231,8 +239,8 @@ new Vue({
 				    "partnerPrice": "",
 				    "shopCode": "",
 				    "shopBarcodes": "",
-				    "goodImg": "",
-				    "preImg": "http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg"
+                    "preImg": "",
+                    "goodImg": ""
 				}
 			]
 		},
@@ -288,7 +296,7 @@ new Vue({
 		},
 		/** 点击添加规格 type:该值存在表示编辑页面初始化数据 **/
 		getBaseInfo(index,type){
-			let base = this.baseList[index],selected = base.selected;
+			let base = JSON.parse(JSON.stringify(this.baseList[index])),selected = base.selected;
 
 			base.selected = !base.selected;
 

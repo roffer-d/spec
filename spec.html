@@ -53,17 +53,19 @@
 					</tr>
 					<tr class="body" v-for="(item,index) in resultList">
 						<td class="spec" v-for="(child,i) in item.children" v-html="child.text"></td>
-						<td v-for="(key,value) of item" v-if="value!='children'">
-							<input type="text" v-model="item[value]" class="form-control validate[required,custom[number]]" />
+						<td v-for="(value,key) of item" v-if="key!='children' && key!='ids'">
+							<input v-if="key=='price'||key=='cost'||key=='partnerPrice'"
+								   v-model="item[key]" class="form-control validate[required,custom[number]]" />
+
+							<input v-else-if="key=='total'" v-model="item[key]"
+								   class="form-control validate[required,custom[integer]]" />
+
+							<img v-else-if="key=='preImg'" :src="item[key]" />
+
+							<span v-else-if="key=='goodImg'" v-model="item[key]">图库&nbsp;本地</span>
+
+							<input v-else v-model="item[key]" class="form-control validate[required]" />
 						</td>
-						<!-- <td><input type="text" class="form-control validate[required,custom[number]]" /></td>
-						<td><input type="text" class="form-control validate[required,custom[integer]]" /></td>
-						<td><input type="text" class="form-control validate[required]" /></td>
-						<td><input type="text" class="form-control validate[required]" /></td>
-						<td><input type="text" class="form-control validate[required]" /></td>
-						<td><input type="text" class="form-control validate[required]" /></td>
-						<td><img src="http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg" /></td>
-						<td>图库&nbsp;本地</td> -->
 					</tr>
 				</table>
 			</form>
