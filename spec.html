@@ -23,7 +23,8 @@
 			<button v-if="classList.length" class="btn btn-sm btn-info" @click="selectedAll">全选</button>
 			<button v-if="classList.length" class="btn btn-sm btn-info" @click="selectReverse">反选</button>
 			<button v-if="classList.length" class="btn btn-sm btn-info" @click="unSelectedAll">清除</button>
-
+			<button v-if="classList.length" class="btn btn-sm btn-info" v-for="(item,index) in classList" 
+				@click="selectedGroup(index)" v-html="'选中组'+(index+1)"></button>
 			<button v-if="classList.length" class="btn btn-sm btn-primary" @click="submit">获取结果</button>
 		</div>
 		<div class="classify">
@@ -34,7 +35,6 @@
 					 	<span v-html="child.text"></span>
 					 	<span v-if="child.selected" class="cur"></span>
 				</div>
-				<button class="btn btn-sm btn-info" @click="selectedGroup(index)">选中该组</button>
 			</div>
 		</div>
 		<div class="result">

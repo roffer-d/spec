@@ -4,7 +4,7 @@
 	display: flex;
     /*border-bottom: 1px solid #c32026;*/
     width: 100%;
-    padding: 20px;
+    padding: 15px 20px;
 }
 .classify-label{
 	min-width: 50px;

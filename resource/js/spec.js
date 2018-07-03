@@ -65,7 +65,7 @@ new Vue({
 				arr.forEach((item,index)=>{
 					let option = {
 						price:'',total:'',cost:'',partnerPrice:'',shopCode:'',shopBarcodes:'',goodImg:'',
-						preImg:'http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg'
+						preImg:''
 					};
 
 					/** 初始化页面有编辑数据,把编辑数据赋值上去 ***/
@@ -98,17 +98,19 @@ new Vue({
 					base.children.forEach((child,idx)=>{
 						this.editData.forEach(edit=>{
 							edit.children.forEach(obj=>{
-								if(child.id == obj.id && arr.indexOf(index) == -1){
-									this.getBaseInfo(index,1);//渲染已选择的父级规格
+								if(child.id == obj.id){
+									arr.indexOf(index)==-1 && this.getBaseInfo(index,1);//渲染已选择的父级规格
 									this.select(index,idx);//选中已选择的子规格
-									console.log(index,idx);
+
 									arr.push(index);
 								}
 							})
 						})
 					})
 				})
-				this.classList = JSON.parse(JSON.stringify(this.readyList));
+
+				// this.classList = JSON.parse(JSON.stringify(this.readyList));
+				// console.log(JSON.stringify(this.classList));
 			},
 			deep:true
 		}
@@ -132,8 +134,8 @@ new Vue({
 				            "selected": true
 				        },
 				        {
-				            "id": "2_1",
-				            "text": "苹果",
+				            "id": "2_2",
+				            "text": "黑莓",
 				            "selected": true
 				        },
 				        {
@@ -159,8 +161,8 @@ new Vue({
 				            "selected": true
 				        },
 				        {
-				            "id": "2_1",
-				            "text": "苹果",
+				            "id": "2_2",
+				            "text": "黑莓",
 				            "selected": true
 				        },
 				        {
@@ -186,8 +188,35 @@ new Vue({
 				            "selected": true
 				        },
 				        {
-				            "id": "2_1",
-				            "text": "苹果",
+				            "id": "2_2",
+				            "text": "黑莓",
+				            "selected": true
+				        },
+				        {
+				            "id": "3_3",
+				            "text": "法国",
+				            "selected": true
+				        }
+				    ],
+				    "price": "",
+				    "total": "",
+				    "cost": "",
+				    "partnerPrice": "",
+				    "shopCode": "",
+				    "shopBarcodes": "",
+				    "goodImg": "",
+				    "preImg": "http://zhekw.oss-cn-beijing.aliyuncs.com/img/338b686a1ecb4658b058cf943cc07700.jpg"
+				},
+				{
+				    "children": [
+				        {
+				            "id": "1_3",
+				            "text": "蓝色",
+				            "selected": true
+				        },
+				        {
+				            "id": "2_2",
+				            "text": "黑莓",
 				            "selected": true
 				        },
 				        {
@@ -264,15 +293,18 @@ new Vue({
 			base.selected = !base.selected;
 
 			if(!selected){
-				this.readyList.push(base);
-				type && this.classList.push(base);
-			}
-			else
+				if(type){
+					this.classList.push(base);
+				}else{
+					this.readyList.push(base);
+				}
+			}else{
 				this.readyList.forEach((item,idx)=>{
 					if(item.id==base.id){
 						this.readyList.splice(idx,1);
 					}
 				})
+			}
 		},
 		/** 点击规格事件 **/
 		getInfo(pIndex,index){
